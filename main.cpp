@@ -4,7 +4,7 @@
 #include "state.h"
 
 int main(void) {
-   string chaine("(1+34)*123");
+   string chaine("(1+36)*123*2");
 
    Lexer l(chaine);
 
@@ -31,6 +31,7 @@ int main(void) {
    
    if (a.isEnded() && !a.isError()) {
       cout << "Expression valide" << endl;
+      cout << "Resultat: " << a.getResult() << endl;
    }
    else {
       cout << "Expression invalide" << endl;

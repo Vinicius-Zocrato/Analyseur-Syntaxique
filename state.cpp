@@ -37,7 +37,7 @@ bool E1::transition(Automate & automate, Symbole * s){
             automate.applyShift(s, new E5);
             break;
         case FIN:
-            cout<<"Expression valide"<<endl;
+            automate.setResult(static_cast<Expr*>(automate.getLastSymboleList())->getValeur());
             automate.setEnded(true);
             break;
         default:
@@ -72,11 +72,14 @@ bool E3::transition(Automate & automate, Symbole * s){
         case PLUS:
         case MULT:
         case CLOSEPAR:
-        case FIN:
+        case FIN: {
             Symbole* popped = automate.popSymbole();
-            automate.applyReduction(new Expr(popped->getValeur()), 1);
+            int valeur = static_cast<Expr*>(popped)->getValeur();
+            automate.applyReduction(new Expr(valeur), 1);
+            break;
+        }
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            cout << "Erreur de syntaxe" << endl;
             automate.setError(true);
             break;
     }
@@ -143,20 +146,18 @@ bool E6::transition(Automate & automate, Symbole * s){
 bool E7::transition(Automate & automate, Symbole * s){
     switch(*s){
         case PLUS:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
-        
+        case CLOSEPAR:
+        case FIN: {
+            Symbole* popped1 = automate.popSymbole();
+            automate.popSymbole(); //pop the PLUS symbol
+            Symbole* popped2 = automate.popSymbole();
+            int valeur1 = static_cast<Expr*>(popped1)->getValeur();
+            int valeur2 = static_cast<Expr*>(popped2)->getValeur();
+            automate.applyReduction(new Expr(valeur1 + valeur2), 3);
             break;
+        }
         case MULT:
             automate.applyShift(s, new E5);
-            break;
-        case CLOSEPAR:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
-            break;
-        case FIN:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
             break;
         default:
             cout<<"Erreur de syntaxe"<<endl;
@@ -169,21 +170,17 @@ bool E7::transition(Automate & automate, Symbole * s){
 bool E8::transition(Automate & automate, Symbole * s){
     switch(*s){
         case PLUS:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
-            break;
         case MULT:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
-            break;
         case CLOSEPAR:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
+        case FIN: {
+            Symbole* popped1 = automate.popSymbole();
+            automate.popSymbole(); //pop the MULT symbol
+            Symbole* popped2 = automate.popSymbole();
+            int valeur1 = static_cast<Expr*>(popped1)->getValeur();
+            int valeur2 = static_cast<Expr*>(popped2)->getValeur();
+            automate.applyReduction(new Expr(valeur1 * valeur2), 3);
             break;
-        case FIN:
-            //depiler symboles et ajouter le resultat
-            automate.applyReduction(s, 3);
-            break;
+        }
         default:
             cout<<"Erreur de syntaxe"<<endl;
             automate.setError(true);
@@ -195,18 +192,16 @@ bool E8::transition(Automate & automate, Symbole * s){
 bool E9::transition(Automate & automate, Symbole * s){
     switch(*s){
         case PLUS:
-            //depiler symboles, récuperer la valeur de E entre les parenthèses
-            automate.applyReduction(new Expr(automate.popSymbole()->getValeur()), 3);
-            break;
         case MULT:
-            automate.applyReduction(s, 3);
-            break;
         case CLOSEPAR:
-            automate.applyReduction(s, 3);
+        case FIN: {
+            automate.popSymbole(); //pop the OPENPAR symbol
+            Symbole* popped1 = automate.popSymbole();
+            automate.popSymbole(); //pop the CLOSEPAR symbol
+            int valeur1 = static_cast<Expr*>(popped1)->getValeur();
+            automate.applyReduction(new Expr(valeur1), 3);
             break;
-        case FIN:
-            automate.applyReduction(s, 3);
-            break;
+        }
         default:
             cout<<"Erreur de syntaxe"<<endl;
             automate.setError(true);
