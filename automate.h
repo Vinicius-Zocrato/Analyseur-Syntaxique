@@ -2,6 +2,8 @@
 #include "state.h"
 #include "symbole.h"
 #include "lexer.h"
+#include <string>
+using namespace std;
 
 class State;
 
@@ -30,6 +32,8 @@ class Automate
         bool isEnded() const { return ended; }
         void setResult(int res) { result = res; }
         int getResult() const { return result; }
+        void setErrorMessage(const string& msg) { errorMessage = msg; }
+        std::string getErrorMessage() const { return errorMessage; }
 
     protected:
         State ** StateList;
@@ -43,6 +47,7 @@ class Automate
         int result;
         bool error;
         bool ended;
+        string errorMessage;
 
         Lexer *lexer;
 

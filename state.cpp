@@ -21,7 +21,7 @@ bool E0::transition(Automate & automate, Symbole * s){
             automate.applyTransition(s, new E1);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu un entier ou '('");
             automate.setError(true);
             break;
     }
@@ -41,7 +41,7 @@ bool E1::transition(Automate & automate, Symbole * s){
             automate.setEnded(true);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu '+', '*' ou fin d'expression");
             automate.setError(true);
             break;
     }
@@ -60,7 +60,7 @@ bool E2::transition(Automate & automate, Symbole * s){
             automate.applyTransition(s, new E6);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu un entier ou '(' après '('");
             automate.setError(true);
             break;
     }
@@ -79,7 +79,7 @@ bool E3::transition(Automate & automate, Symbole * s){
             break;
         }
         default:
-            cout << "Erreur de syntaxe" << endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu '+', '*', ')' ou fin d'expression");
             automate.setError(true);
             break;
     }
@@ -98,7 +98,7 @@ bool E4::transition(Automate & automate, Symbole * s){
             automate.applyTransition(s, new E7);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu un entier ou '(' après '+'");
             automate.setError(true);
             break;
     }
@@ -117,7 +117,7 @@ bool E5::transition(Automate & automate, Symbole * s){
             automate.applyTransition(s, new E8);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu un entier ou '(' après '*'");
             automate.setError(true);
             break;
     }
@@ -136,7 +136,7 @@ bool E6::transition(Automate & automate, Symbole * s){
             automate.applyShift(s, new E9);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu '+', '*' ou ')'");
             automate.setError(true);
             break;
     }
@@ -149,7 +149,7 @@ bool E7::transition(Automate & automate, Symbole * s){
         case CLOSEPAR:
         case FIN: {
             Symbole* popped1 = automate.popSymbole();
-            automate.popSymbole(); //pop the PLUS symbol
+            automate.popSymbole();
             Symbole* popped2 = automate.popSymbole();
             int valeur1 = static_cast<Expr*>(popped1)->getValeur();
             int valeur2 = static_cast<Expr*>(popped2)->getValeur();
@@ -160,7 +160,7 @@ bool E7::transition(Automate & automate, Symbole * s){
             automate.applyShift(s, new E5);
             break;
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu '+', '*', ')' ou fin d'expression");
             automate.setError(true);
             break;
     }
@@ -174,7 +174,7 @@ bool E8::transition(Automate & automate, Symbole * s){
         case CLOSEPAR:
         case FIN: {
             Symbole* popped1 = automate.popSymbole();
-            automate.popSymbole(); //pop the MULT symbol
+            automate.popSymbole(); 
             Symbole* popped2 = automate.popSymbole();
             int valeur1 = static_cast<Expr*>(popped1)->getValeur();
             int valeur2 = static_cast<Expr*>(popped2)->getValeur();
@@ -182,7 +182,7 @@ bool E8::transition(Automate & automate, Symbole * s){
             break;
         }
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu '+', '*', ')' ou fin d'expression");
             automate.setError(true);
             break;
     }
@@ -195,15 +195,15 @@ bool E9::transition(Automate & automate, Symbole * s){
         case MULT:
         case CLOSEPAR:
         case FIN: {
-            automate.popSymbole(); //pop the OPENPAR symbol
+            automate.popSymbole(); 
             Symbole* popped1 = automate.popSymbole();
-            automate.popSymbole(); //pop the CLOSEPAR symbol
+            automate.popSymbole(); 
             int valeur1 = static_cast<Expr*>(popped1)->getValeur();
             automate.applyReduction(new Expr(valeur1), 3);
             break;
         }
         default:
-            cout<<"Erreur de syntaxe"<<endl;
+            automate.setErrorMessage("symbole inattendu '" + Etiquettes[*s] + "' : attendu '+', '*', ')' ou fin d'expression");
             automate.setError(true);
             break;
     }

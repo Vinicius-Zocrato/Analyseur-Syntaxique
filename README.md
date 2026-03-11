@@ -51,4 +51,15 @@ make
 ./main
 ```
 
-La sortie affiche soit le résultat de l'expression, soit un message d'erreur de syntaxe.
+La sortie affiche étape par étape l'exécution de l'automate. Ensuite, on affiche soit le résultat de l'expression, soit un message d'erreur de syntaxe.
+
+---
+
+## Tests
+
+```bash
+make tests
+./tests
+```
+
+Le fichier `tests.cpp` vérifie le bon fonctionnement de l'analyseur sur deux catégories de cas.
